@@ -35,4 +35,5 @@ urlpatterns = [
     # path("",views.index,name="index")
     path('', include('api.urls')),
     path('api/',include(router.urls)),
+    path('camera/',include('streamApp.urls')),
 ]

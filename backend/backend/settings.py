@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-+uh(+lm*wtht%)i6i3l5tn)!cjvij%ht@lgp8=kp#pyxi(9=&a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'api',
+    'streamApp'
 
 ]
 
@@ -125,6 +126,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = False
 CORS_ORIGIN_WHITELIST = [
      'http://localhost:19006'
 ]
