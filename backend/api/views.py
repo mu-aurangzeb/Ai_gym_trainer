@@ -11,6 +11,7 @@ from .models import User_info
 
 
 def index(request):
+    print("api index")
     return render(request, "index.html")
 
 

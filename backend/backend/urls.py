@@ -32,8 +32,8 @@ router.register(r'users', views.UserView, 'api')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path("",views.index,name="index")
-    path('', include('api.urls')),
+    path("",views.index,name="index"),
+    #path('', include('api.urls')),
     path('api/',include(router.urls)),
     path('camera/',include('streamApp.urls')),
 ]
