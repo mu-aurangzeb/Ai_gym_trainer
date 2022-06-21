@@ -1,3 +1,4 @@
+from typing_extensions import Self
 from unicodedata import name
 from django.db import models
 from jsonfield import JSONField
@@ -46,22 +47,60 @@ class User_info (models.Model):
 
 
     def _get_diet_plan(self):
-        data = {"age": self.age,
-        "weight": self.weight,
-        "height": self.height,
-        "gender": self.gender}
-        "Returns the person's full name."
+        dietdata1 = [
+        ['1 CUP OATS','10','54', '5'],
+        ['1/2 APPLE','0','14', '0'],
+        ['5 BOILED EGG WHITES','20','0', '0'],
+        ['1 WHOLE EGG','6','1', '5'],
+        ['TOTAL CALORIES = 510','36g','69g', '10g']
+    ]
+        dietdata2 = [
+      ['3 BREAD','6','45', '4'],
+      ['1SP PEANUT BUTTER','4','4', '7'],
+      ['0.8 scoop WHEY PROTEIN','20','1', '1'],
+      ['WATER 240ML','0','0', '0'],
+      ['TOTAL CALORIES = 428','30g','50g', '12g']
+    ]
+        dietdata3 = [
+    ['240g BLACK CHANNA','16','44', '3'],
+    ['1/2CUP RICE','4','20', '0'],
+    ['COOKED IN1/2SP COCONUT OIL','0','0', '7'],
+    ['MIX SALAD','0','0', '0'],
+    ['TOTAL CALORIES = 426','20g','64g', '10g']
+    ]
+        data = {
+        "dietdata1": dietdata1, 
+        "dietdata2": dietdata2,
+        "dietdata3": dietdata3
+        }
         return data
     diet_plan = property(_get_diet_plan)
 
     def _get_exercise_plan(self):
-        data = {"age": self.age,
-        "weight": self.weight,
-        "height": self.height,
-        "gender": self.gender}
-        "Returns the person's full name."
+        monday_data = [
+        ['Superset','WARM UP 1. DB CURLS + DB KICK BACK DOWN (LIGHT WEIGHT)','2', '20-25', '0'],
+        ['Superset','2A. CABLE CURLS 2B. TRICEPS PRESS DOWN','3-3', '12-10-8', '2MIN'],
+        ['Superset','3A. PREACHER CURL 3B. OVERHEAD DB EXTENSION','5-5', '12-10-8', '2MIN'],
+        ['Superset','4A. HIGH ANGLE CABLE CURL 4B. SINGLE HAND TRICEP EXT','5-5', '12-10-8', '2MIN'],
+        ['Superset','5A. SINGLE HAND INWARD CURL 5B. TRICEP PUSHDOWN','2', '20-20', '2MIN']
+    ]
+        tuesday_data = [
+        ['Superset','WARM UP 1. DB CURLS + DB KICK BACK DOWN (LIGHT WEIGHT)','2', '20-25', '0'],
+        ['Superset','2A. CABLE CURLS 2B. TRICEPS PRESS DOWN','3-3', '12-10-8', '2MIN'],
+        ['Superset','3A. PREACHER CURL 3B. OVERHEAD DB EXTENSION','5-5', '12-10-8', '2MIN'],
+        ['Superset','4A. HIGH ANGLE CABLE CURL 4B. SINGLE HAND TRICEP EXT','5-5', '12-10-8', '2MIN'],
+        ['Superset','5A. SINGLE HAND INWARD CURL 5B. TRICEP PUSHDOWN','2', '20-20', '2MIN']
+    ]
+        data = {
+        "monday_data": monday_data,
+        "tuesday_data":tuesday_data
+        }
         return data
-    exercise_plan = property(_get_exercise_plan)
+
+    if (bmi_status!= "Under weight"):
+        exercise_plan = property(_get_exercise_plan)
+    else:
+        exercise_plan="none"
 
 
 

@@ -2,19 +2,28 @@ import cv2
 import numpy as np
 import mediapipe as mp
 import os
+from imutils.video import VideoStream
+import imutils
 import pickle
-import cv2,os
-class VideoCamera_bicep(object):
+import cv2,os,urllib.request
+class VideoCamera_squats(object):
      
     mpPose = mp.solutions.pose
     pose = mpPose.Pose()
     mpDraw = mp.solutions.drawing_utils
     counter = 0
     stage = None
+    position=None
     #pickled_model = pickle.load(open('static/streamApp/bicecp_fyp_model.pkl', 'rb'))
     #image12=load_img("static/img/first.jpg")
     #print("pickled_model",pickled_model)
     
+    # def get_count(self,count=counter):
+    #     return self.counter
+    # def set_count(self,count=counter):
+    #     self.counter=self.counter+1
+    #     return self.counter
+
 
   
 
@@ -30,12 +39,11 @@ class VideoCamera_bicep(object):
         success, image = self.video.read()
         count1=1
         stage1=None
-
         image= cv2.flip(image, 0)
+        
     
         # ret, frame = self.cap.read()
         imgRGB = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-       
         #imgRGB=cv2.flip(imgRGB, 0)
         results = pose.process(imgRGB)
         #count=counter
@@ -50,12 +58,14 @@ class VideoCamera_bicep(object):
             b = np.array(b) # Mid
             c = np.array(c) # End
             radians = np.arctan2(c[1]-b[1], c[0]-b[0]) - np.arctan2(a[1]-b[1], a[0]-b[0])
-            angle = np.abs(radians*180.0/np.pi)
-            if angle >180.0:
+            angle = float(np.abs(radians*180.0/np.pi))
+            if (float(angle) > 180.0):
                 angle = 360-angle
             return angle 
         
        
+        
+        
 
         mpDraw.draw_landmarks(imgRGB, results.pose_landmarks, mpPose.POSE_CONNECTIONS,
                                 mpDraw.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=2), 
@@ -64,54 +74,65 @@ class VideoCamera_bicep(object):
         if not results.pose_landmarks:
             no_results_found="no results found"
             print("no results found")
-            shoulder= [0.8114764094352722, 0.8035386800765991]
-            elbow =[0.9500219225883484, 1.0270370244979858]
-            wrist =[1.0535483360290527, 1.4806321859359741]
-            anglee=0
+            right_ankle= [0.0, 0.0]
+            right_knee =[0.0, 0.0]
+            right_hip =[0.0, 0.0]
+            position="no results found"
+            angle=0
             #shoulder=0
             #elbow=0
             #wrist=0
         else: 
             landmarks = results.pose_landmarks.landmark
-            shoulder = [landmarks[mpPose.PoseLandmark.LEFT_SHOULDER.value].x,landmarks[mpPose.PoseLandmark.LEFT_SHOULDER.value].y]
-            elbow = [landmarks[mpPose.PoseLandmark.LEFT_ELBOW.value].x,landmarks[mpPose.PoseLandmark.LEFT_ELBOW.value].y]
-            wrist = [landmarks[mpPose.PoseLandmark.LEFT_WRIST.value].x,landmarks[mpPose.PoseLandmark.LEFT_WRIST.value].y]
-            print("shoulder",shoulder)
-            print("elbow",elbow)
-            print("wrist",wrist)
 
-        #print(calculate_angle(shoulder, elbow, wrist))
-            anglee=calculate_angle(shoulder, elbow, wrist)
+
+
+            right_ankle = [landmarks[mpPose.PoseLandmark.RIGHT_ANKLE.value].x,landmarks[mpPose.PoseLandmark.RIGHT_ANKLE.value].y]
+            right_knee = [landmarks[mpPose.PoseLandmark.RIGHT_KNEE.value].x,landmarks[mpPose.PoseLandmark.RIGHT_KNEE.value].y]
+            right_hip = [landmarks[mpPose.PoseLandmark.RIGHT_HIP.value].x,landmarks[mpPose.PoseLandmark.RIGHT_HIP.value].y]
+            
+            shoulder = [landmarks[mpPose.PoseLandmark.RIGHT_SHOULDER.value].x,landmarks[mpPose.PoseLandmark.RIGHT_SHOULDER.value].y]
+            
+            print("right_ankle",right_ankle)
+            print("right_knee",right_knee)
+            print("right_hip",right_hip)
+            # Calculate angle
+            angle = calculate_angle(right_hip, right_knee, right_ankle)
+            back_angle = calculate_angle(shoulder, right_hip, right_knee)
+            print("angle",angle)
+            print("back_angle",back_angle)
         
-        print(anglee)
-
-
-        if (int(anglee) > 155):
-            print("down",self.stage)
-            self.stage = "down"
-        if ((int(anglee) < 30) and (self.stage =='down')):
-            self.stage="up"
-            self.counter+=1
-            print("up",self.stage)
-
-            print("Countttttt", self.counter)
+            
+            if ( (int(angle) > 170) and (int(back_angle)>155)):
+                self.stage = "up"
+            if( (int(angle) < 155) and (self.stage =='up') and (int(back_angle)>155) ):
+                self.stage="down"
+                self.counter +=1
+                print(self.counter )
+                
+            if ((int(back_angle)>155) or (int(angle) > 170)):
+                position="right"
+            else:
+                position="wrong"
 
 
         frame = cv2.cvtColor(imgRGB, cv2.COLOR_RGB2BGR)
+        frame_flip=frame
         #frame_flip = cv2.flip(frame, 0)
         cv2.rectangle(frame_flip, (0,0), (225,73), (245,117,16), -1)
         # Visualize angle
-        cv2.putText(frame_flip, str(calculate_angle(shoulder, elbow, wrist)), 
-                           tuple(np.multiply(elbow, [50, 250]).astype(int)), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA
-                                )
+        cv2.putText(frame_flip, str(angle),tuple(np.multiply(right_hip, [50, 250]).astype(int)),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
         
 
         cv2.putText(frame_flip, 'REPS', (15,12),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv2.LINE_AA)
-        cv2.putText(frame_flip, str(self.counter), 
-                    (10,60), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 2, cv2.LINE_AA)
-        if anglee==0:
+        cv2.putText(frame_flip, str(self.counter),(10,60),cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 2, cv2.LINE_AA)
+        
+
+        cv2.putText(frame_flip, str(position), (135,40),cv2.FONT_HERSHEY_SIMPLEX, 2, (20,20,20), 2, cv2.LINE_AA)
+        
+
+
+        if angle==0:
             cv2.putText(frame_flip, 'not visiable to camera', (150,120),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (10,10,10), 1, cv2.LINE_AA)
        
 

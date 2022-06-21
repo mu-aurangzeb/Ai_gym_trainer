@@ -15,12 +15,14 @@ Including another URLconf
 """
 from xml.etree.ElementInclude import include
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path
+from django.conf.urls import include
 # from rest_framework import routers
 # from . import views
 from django.conf.urls.static import static
 # from api import views
 #from api import urls
+
 
 
 from rest_framework import routers
@@ -35,5 +37,7 @@ urlpatterns = [
     path("",views.index,name="index"),
     #path('', include('api.urls')),
     path('api/',include(router.urls)),
-    path('camera/',include('streamApp.urls')),
+    path('bicep/',include('streamApp.urls')),
+    path('squats/',include('squats.urls')),
+    path('butterfly/',include('butterfly.urls'))
 ]

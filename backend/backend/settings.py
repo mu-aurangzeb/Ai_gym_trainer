@@ -14,8 +14,10 @@ from pathlib import Path
 import os 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -26,7 +28,8 @@ SECRET_KEY = 'django-insecure-+uh(+lm*wtht%)i6i3l5tn)!cjvij%ht@lgp8=kp#pyxi(9=&a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*','192.168.10.117','http://192.168.10.120']
+ALLOWED_HOSTS = ['*','192.168.10.117','http://192.168.10.120' ,'http://192.168.147.169','http://localhost',"http://192.168.147.92"
+]
 
 
 # Application definition
@@ -41,7 +44,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'api',
-    'streamApp'
+    'streamApp',
+    'squats',
+    'butterfly'
 
 ]
 
@@ -53,7 +58,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'corsheaders.middleware.CorsMiddleware',
+    #   'corsheaders.middleware.CorsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -124,15 +130,21 @@ USE_TZ = True
 
 # STATIC_URL = '/static/'
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
+
+# STATICFILES_DIRS = (
+#     os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'assets'),
+# )
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = False
 CORS_ORIGIN_WHITELIST = [
-     'http://localhost:19006'
+     'http://localhost:19006',"http://localhost","http://192.168.147.92"
 ]
 
-# Add these new lines
+
+
+#Add these new lines
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
